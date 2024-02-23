@@ -1,0 +1,9 @@
+/* Target WebKit-based browsers for basic scrollbar styling */
+.overflow-auto::-webkit-scrollbar {  
+    width: 1px; /* Adjust width as needed */
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* Use Tailwind's opacity scale if desired */
+    border-radius: 3px; 
+}

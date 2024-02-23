@@ -1,0 +1,91 @@
+[
+    {
+        "id": 1,
+        "title": "Note 1",
+        "content": [
+            { "insert": "This is the content of note 1.\n" },
+            { "insert": { "image": "https://picsum.photos/id/10/200/300" } }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "My Project Ideas",
+        "content": [
+            { "insert": "Brainstorming session notes...\n" },
+            { "insert": "Feature 1: User profiles\n" },
+            { "insert": "Feature 2: Collaboration tools\n" }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Daily Journal",
+        "content": [
+            { "insert": "Today was a productive day. Accomplished several tasks..." }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Shopping List",
+        "content": [
+            { "insert": "Bread\n" },
+            { "insert": "Eggs\n" },
+            { "insert": "Milk\n" },
+            { "insert": "Apples\n" }
+        ]
+    },
+    {
+        "id": 5,
+        "title": "Meeting Notes",
+        "content": [
+            { "insert": "Meeting with the team on [date]\n" },
+            { "insert": "Action items:\n" },
+            { "insert": "- Follow up on project status\n" }
+        ]
+    },
+    {
+        "id": 6,
+        "title": "Website Redesign Notes",
+        "content": [
+            { "insert": "Ideas for the new website:\n" },
+            { "insert": "  - Modern and clean design\n" },
+            { "insert": "  - Improved navigation\n" },
+            { "insert": { "image": "https://picsum.photos/id/237/200/300" } }
+        ]
+    },
+    {
+        "id": 7,
+        "title": "Recipe: Chicken Curry",
+        "content": [
+            { "insert": "Ingredients:\n" },
+            { "insert": "  - Chicken\n" },
+            { "insert": "  - Onion\n" },
+            { "insert": "  - Curry powder\n" },
+            { "insert": "Instructions: ...\n" }
+        ]
+    },
+    {
+        "id": 8,
+        "title": "Travel Itinerary",
+        "content": [
+            { "insert": "Trip to Paris - May 2024\n" },
+            { "insert": "Day 1: Visit the Eiffel Tower\n" },
+            { "insert": "Day 2: Explore the Louvre\n" }
+        ]
+    },
+    {
+        "id": 9,
+        "title": "Code Snippets",
+        "content": [
+            { "insert": "// JavaScript function for sorting an array\n" },
+            { "insert": "const arr = [5, 2, 9, 1];\narr.sort((a, b) => a - b);\n" }
+        ]
+    },
+    {
+        "id": 10,
+        "title": "Random Thoughts",
+        "content": [
+            { "insert": "Interesting article about AI...\n" },
+            { "insert": "Need to remember to book that appointment...\n" }
+        ]
+    }
+]
