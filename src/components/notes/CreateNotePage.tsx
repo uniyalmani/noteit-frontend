@@ -4,7 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import { useParams, useLocation } from 'react-router-dom'; 
 import Quill, { Delta } from 'quill';
 
-
+import Cookies from 'js-cookie';
 
 // interface Note {
 //     id: number;
@@ -14,7 +14,7 @@ import Quill, { Delta } from 'quill';
 
 const CreateNotePage: React.FC = () => {
     const Delta = Quill.import('delta')
-    const { noteId } = useParams();
+    const [noteId, setNoteId] = useState("");
     const location = useLocation(); // Import useLocation
     const [title, setTitle] = useState('');
     const [content, setContent] = useState(new Delta());
@@ -22,34 +22,7 @@ const CreateNotePage: React.FC = () => {
     const [loadedNoteContent, setLoadedNoteContent] = useState(''); // Initialize for editing
     const quillRef = useRef<ReactQuill | null>(null); 
 
-    // useEffect(() => {
-    //     setIsEditing(true); 
-    //     // console.log(Delta)   
-    //     const Delta = Quill.import('delta');
-    //     const storedDelta = new Delta([
-    //         { insert: "gw" },
-    //         { attributes: { header: 1 }, insert: "\n" },
-    //         { insert: "this is \n" },
-    //         { insert: { image: 'https://picsum.photos/id/1/200/300' } }, // Insert image
-    //         { insert: "\n" } // Add a newline for spacing if needed
-    //     ]);
-    //     console.log(storedDelta)
-        
-    //     setLoadedNoteContent(storedDelta); 
-    //     if (noteId) {
-    //         setIsEditing(true); 
-    //         const fetchNote = async () => {
-    //             const response = await fetch(`/api/notes/${noteId}`);
-    //             if (response.ok) {
-    //                 const noteData = await response.json();
-    //                 setLoadedNoteContent(noteData.content); // Assuming 'content' holds delta
-    //             } else {
-                    
-    //             }
-    //         };
-    //         fetchNote(); 
-    //     }
-    // }, [noteId]); 
+
 
     useEffect(() => {
         console.log(location.state)
@@ -58,6 +31,7 @@ const CreateNotePage: React.FC = () => {
         if (noteData) {
             // Delta = Quill.import('delta')
             setIsEditing(true);
+            setNoteId(noteData.id)
             setTitle(noteData.title);
             setContent(new Delta(noteData.content))
             setIsEditing(true); 
@@ -79,20 +53,30 @@ const CreateNotePage: React.FC = () => {
         console.log(delta)
         
         const dataToSend = {
+            noteId,
             title, 
             content: delta, // Send the delta to the backend
         };
         console.log(JSON.stringify(dataToSend))
     
         try {
-            const response = await fetch('/api/notes', { // Assuming '/api/notes' is your backend route
+            const accessToken = Cookies.get('accessToken');
+            const response = await fetch('http://127.0.0.1:8000/api/notes/createnote/', { // Assuming '/api/notes' is your backend route
                 method: 'POST', // Or 'PUT' for editing
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json' ,
+                    'Authorization': `Bearer ${accessToken}`
+            
+            },
                 body: JSON.stringify(dataToSend)
             });
     
             if (response.ok) {
-                // Handle successful save (e.g., reset the form, redirect)
+                const data = await response.json();
+                console.log(data)
+                console.log("data is fine ")
+                
+        return data;
             } else {
                 // Handle error
             }
