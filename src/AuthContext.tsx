@@ -1,6 +1,7 @@
 // AuthProvider.tsx
 import React, { createContext, useState, useEffect, FC } from 'react';
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextData {
     isLoggedIn: boolean;
@@ -38,6 +39,7 @@ const AuthProvider: FC = ({ children }) => {
                 'Content-Type': 'application/json',
             },
         });
+        console.log(response, "chek")
 
         if (response.ok) {
             const data = await response.json();
@@ -50,18 +52,20 @@ const AuthProvider: FC = ({ children }) => {
                 Cookies.set('accessToken', access);
                 Cookies.set('refreshToken', refresh);
             } else {
+                console.log(data, 'check this ')
                 // Handle error case when 'success' is false
                 throw new Error(data.message || 'Login failed.'); 
             }
         } else {
+            console.log(response)
             if (response.status === 400) { // Assuming 400 for validation errors
-                const errorData = await response.json(); 
-                throw new Error(errorData.message); 
+                const data = await response.json(); 
+                throw new Error(data.message); 
             } else {
                 throw new Error('Login failed. Please check your credentials.'); 
             }
         }
-    } catch (error) {
+    } catch (error:any) {
         if (error instanceof Error) { 
             if (error.name === 'AbortError') { 
                 throw new Error('Could not connect to the server. Please check your network connection.');
@@ -71,7 +75,7 @@ const AuthProvider: FC = ({ children }) => {
                 throw error; // Re-throw other errors
             }
         } else {
-            throw new Error('An unknown error occurred.'); 
+            throw new Error(error.message); 
         }
     }
 };
@@ -101,13 +105,14 @@ const AuthProvider: FC = ({ children }) => {
                 Cookies.set('refreshToken', refresh);
             } else {
                 // Handle error case when 'success' is false
-                throw new Error(data.message || 'Login failed.'); 
+                throw new Error(data.message + 'Login failed.'); 
             }
         } else {
             if (response.status === 400) { // Assuming 400 for validation errors
                 const errorData = await response.json(); 
                 throw new Error(errorData.message); 
             } else {
+                console.log(response.status)
                 throw new Error('Login failed. Please check your credentials.'); 
             }
         }
@@ -131,7 +136,10 @@ const AuthProvider: FC = ({ children }) => {
     setRefreshToken(undefined);
     setIsLoggedIn(false);
     Cookies.remove('accessToken');
-    Cookies.remove('refreshToken'); // Remove refresh token on logout
+    Cookies.remove('refreshToken'); 
+
+    
+     // Remove refresh token on logout
 };
 
 const refreshAccessToken = async () => {
@@ -166,9 +174,43 @@ const refreshAccessToken = async () => {
     }
 };
 
+// Inside AuthContext.tsx
 useEffect(() => {
-    // ... Your existing useEffect logic ...
-}, []);
+    const checkLoggedIn = async () => { 
+        const accessToken = Cookies.get('accessToken');
+        if (accessToken) {
+            setIsLoggedIn(true); 
+            setAccessToken(accessToken); 
+
+            try {
+                await refreshAccessToken(); 
+            } catch (error) {
+                console.error('Error refreshing token:', error);
+                logout(); // Force logout if refresh fails
+                navigateToLogin('Your session has expired. Please log in again.'); // Redirect 
+            }
+        } else {
+            navigateToLogin('Please log in to continue.'); // Redirect if not logged in
+        }
+    };
+
+    checkLoggedIn();  
+
+    // Helper function for redirection with a message
+    const navigateToLogin = (message:string) => {
+        // Assuming you have a 'useNavigate' hook from 'react-router-dom'
+        const navigate = useNavigate(); 
+
+        // Implementation for passing the message and redirecting:
+        // Option 1: Using query parameters 
+        navigate(`/signin?message=${encodeURIComponent(message)}`);
+
+        // Option 2: Using state (might depend on your router setup)
+        // navigate('/login', { state: { message: message } }); 
+    }
+
+}, []); 
+
 
 return (
     <AuthContext.Provider value={{ isLoggedIn, accessToken, refreshToken, login, signup, logout, refreshAccessToken }}>

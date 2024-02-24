@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import NoteCard from "./NoteCard";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../../hooks/useAuth';
 import Cookies from 'js-cookie';
 
 const NoteList: React.FC = () => {
     const [notes, setNotes] = useState<Note[]>([]);
     const [nextPageUrl, setNextPageUrl] = useState<string | null>(null);
     const navigate = useNavigate();
-    
-    useEffect(() => {
-        const fetchNotes = async () => {
+    const { refreshAccessToken } = useAuth();
+    const location = useLocation();
+    const [refreshingToken, setRefreshingToken] = useState(false); 
+    const [successMessage, setSuccessMessage] = useState(location.state && location.state.successMessage)
+
+    useEffect(()  => {
+        let refreshCounter = 0;
+        const fetchNotes:any = async () => 
+        {
             try {
                 const accessToken = Cookies.get('accessToken');
                 const response = await fetch('http://127.0.0.1:8000/api/notes/', {
@@ -21,19 +28,49 @@ const NoteList: React.FC = () => {
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `Request failed with status: ${response.status}`);
+                    if (response.status === 401 && !refreshingToken) {
+                        try {
+                            await refreshAccessToken(); 
+                            refreshCounter += 1
+                        } catch (error) {
+                            console.error('Failed to refresh token:', error);
+                        }
+                    } else {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `Request failed with status: ${response.status}`);
+                    }
                 }
 
                 const data = await response.json();
-                setNotes(data.results);
+                setNotes(data.results || []);
+                setSuccessMessage(null)
                 setNextPageUrl(data.next);
             } catch (error) {
                 console.error('Error fetching notes data:', error);
             }
+
+
         };
 
-        fetchNotes();
+        
+       
+        
+        const attemptFetchWithRefresh = async () => {
+            await fetchNotes();
+    
+            if (refreshCounter === 1) {
+                await fetchNotes(); // Retry after refresh
+            }
+    
+            if (refreshCounter === 2) {
+                console.log("Refresh token expired");
+            }
+        };
+    
+        // Initial attempt
+        attemptFetchWithRefresh(); 
+        
+        
     }, []);
 
     const handleCreateNewNote = () => {
@@ -71,7 +108,44 @@ const NoteList: React.FC = () => {
         }
     };
 
+    // Function to handle pin toggle
+    // Function to handle pin toggle
+const handlePinToggle = async (noteId: number) => {
+    try {
+        console.log("called")
+        const accessToken = Cookies.get('accessToken');
+        const response = await fetch(`http://127.0.0.1:8000/api/notes/togglepin/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({ noteId: noteId })
+        });
+
+        if (response.ok) {
+            // Update the pinned status of the corresponding note
+            setNotes(prevNotes =>
+                prevNotes.map(note =>
+                    note.id === noteId ? { ...note, is_pinned: !note.is_pinned } : note
+                )
+            );
+        } else {
+            console.error('Failed to toggle pin:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error toggling pin:', error);
+    }
+};
+
+
     return (
+        <>
+        {successMessage && (
+                <div className="bg-green-200  w-full text-center text-green-800">
+                    {successMessage}
+                </div>
+            )}
         <div className="flex flex-wrap justify-center h-screen overflow-auto dark:bg-gray-900">
             <div
                 className="w-1/4 p-6 mb-4 m-4 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 cursor-pointer flex flex-col items-center justify-center"
@@ -81,8 +155,13 @@ const NoteList: React.FC = () => {
                 <FontAwesomeIcon icon={faPlus} size="4x" color='white' className="mb-2" /> 
                 <p className="text-gray-900 dark:text-white text-lg">Create New Note</p>
             </div>
-            {notes.map(note => (
-                <NoteCard key={note.id} note={note} updateNoteList={updateNoteList} />
+            {/* Display pinned notes first */}
+            {notes.filter(note => note.is_pinned).map(note => (
+                <NoteCard key={note.id} note={note} updateNoteList={updateNoteList} handlePinToggle={handlePinToggle} />
+            ))}
+            {/* Display other notes */}
+            {notes.filter(note => !note.is_pinned).map(note => (
+                <NoteCard key={note.id} note={note} updateNoteList={updateNoteList} handlePinToggle={handlePinToggle} />
             ))}
             {nextPageUrl && (
                 <button onClick={handleLoadMore} className="bg-blue-500 size-auto hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 transition duration-300 ease-in-out">
@@ -90,6 +169,7 @@ const NoteList: React.FC = () => {
                 </button>
             )}
         </div>
+        </>
     );
 };
 

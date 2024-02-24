@@ -7,20 +7,21 @@ import Cookies from 'js-cookie';
 interface NoteCardProps {
     note: Note;
     updateNoteList: (deletedNoteId: number) => void;
+    handlePinToggle: (noteId: number) => void; // Function to handle pin toggle
 }
 
-const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList }) => {
+const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinToggle }) => {
     const navigate = useNavigate();
-    const [pinned, setPinned] = useState<boolean>(false);
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
 
     const handleCardClick = () => {
-        navigate(`/createnote`, { state: { noteData: note } }); 
+        navigate(`/createnote`, { state: { noteData: note } });
     };
 
     const handlePinClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
-        setPinned(!pinned);
+        console.log("hello")
+        handlePinToggle(note.id); // Call handlePinToggle function with note id
     };
 
     const handleDeleteClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -65,10 +66,10 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList }) => {
                 {extractDescription(note.content)} 
             </p>
             <div className="absolute bottom-0 right-0 mb-2 mr-2">
-                <div className="mr-4" onClick={handlePinClick}>
-                    <FontAwesomeIcon icon={faThumbtack} className={`cursor-pointer text-xl ${pinned ? 'text-blue-500' : 'text-gray-500'}`} />
+                <div className="mr-4 m-4" onClick={handlePinClick}>
+                    <FontAwesomeIcon icon={faThumbtack} className={`cursor-pointer text-xl ${note.is_pinned ? 'text-blue-500' : 'text-gray-500'}`} />
                 </div>
-                <div onClick={handleDeleteClick}>
+                <div className="mr-4 m-4" onClick={handleDeleteClick}>
                     <FontAwesomeIcon icon={faTrash} className="cursor-pointer text-xl text-red-500" />
                 </div>
             </div>
@@ -95,7 +96,7 @@ function extractDescription(content: ContentItem[]) {
             return text;
         }
     }, '');
-    return text.slice(0, 50) + '...';
+    return text.slice(0, 200) + '...';
 }
 
 export default NoteCard;

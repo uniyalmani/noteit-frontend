@@ -1,16 +1,14 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef, useContext} from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useParams, useLocation } from 'react-router-dom'; 
 import Quill, { Delta } from 'quill';
+import { useAuth } from '../../hooks/useAuth';
+import { AuthContext } from '../../AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 import Cookies from 'js-cookie';
 
-// interface Note {
-//     id: number;
-//     title: string;
-//     content: string;
-// }
 
 const CreateNotePage: React.FC = () => {
     const Delta = Quill.import('delta')
@@ -21,13 +19,19 @@ const CreateNotePage: React.FC = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [loadedNoteContent, setLoadedNoteContent] = useState(''); // Initialize for editing
     const quillRef = useRef<ReactQuill | null>(null); 
+    const navigate = useNavigate(); 
+    const { refreshAccessToken } = useAuth();
+    const [message, setMessage] = useState(''); // Initially no message
 
 
 
     useEffect(() => {
         console.log(location.state)
+        // setMessage('')
         const { noteData } = location.state || {};// Fetch note data from state
-        console.log(noteData)
+        // if (!isLoggedIn) {
+        //     navigate(`/signin?message=${encodeURIComponent("Your session has expired. Please log in again.")}`);
+        // }
         if (noteData) {
             // Delta = Quill.import('delta')
             setIsEditing(true);
@@ -43,11 +47,12 @@ const CreateNotePage: React.FC = () => {
         }
     }, [location.state]);
 
-    const handleSave = async () => {
+    const handleSave:any = async () => {
         if (!title) {
             alert("Please enter a title");
             return; 
         }
+        
         
         const delta = quillRef.current?.getEditor().getContents(); 
         console.log(delta)
@@ -58,31 +63,66 @@ const CreateNotePage: React.FC = () => {
             content: delta, // Send the delta to the backend
         };
         console.log(JSON.stringify(dataToSend))
+
+        let refreshCounter = 0;
+
+        const attemptSave = async () => {
     
-        try {
-            const accessToken = Cookies.get('accessToken');
-            const response = await fetch('http://127.0.0.1:8000/api/notes/createnote/', { // Assuming '/api/notes' is your backend route
-                method: 'POST', // Or 'PUT' for editing
-                headers: { 
-                    'Content-Type': 'application/json' ,
-                    'Authorization': `Bearer ${accessToken}`
-            
-            },
-                body: JSON.stringify(dataToSend)
-            });
-    
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data)
-                console.log("data is fine ")
+            try {
+                const accessToken = Cookies.get('accessToken');
+                const response = await fetch('http://127.0.0.1:8000/api/notes/createnote/', { // Assuming '/api/notes' is your backend route
+                    method: 'POST', // Or 'PUT' for editing
+                    headers: { 
+                        'Content-Type': 'application/json' ,
+                        'Authorization': `Bearer ${accessToken}`
                 
-        return data;
-            } else {
-                // Handle error
+                },
+                    body: JSON.stringify(dataToSend)
+                });
+        
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("data is fine ", data);
+                    navigate('/', { state: { successMessage: 'Note saved successfully!' } });
+                    return data;
+                    // navigate('/')
+                    // Potentially redirect to a success page or display a message
+                } else {
+                    if (response.status === 401) { // Access token likely expired
+                        try {
+                            refreshCounter += 1
+                            await refreshAccessToken();
+                             
+                        } catch (error:any) {
+                            setMessage('Failed to refresh token:'+ error.message); 
+                            console.error('Failed to refresh token:', error);
+                            // Handle refresh failure (e.g., redirect to login)
+                        }
+                    } else {   
+                        // Handle other non-successful status codes
+                        const errorData = await response.json(); 
+                        setMessage('Error saving note:'); 
+                        console.error('Error saving note:', errorData);
+                        // Display an error message or handle it according to your UI
+                    }
+                }
+            } catch (error:any) {
+                // Handle network errors or other unexpected errors
+                console.error('Error saving note:', error); 
+                setMessage('Error saving note:' + error.message); 
+                // Display a generic error message or handle as needed
             }
-        } catch (error) {
-            console.error("Error saving note:", error);
+
+        };
+
+        await attemptSave()
+        if (refreshCounter === 1){
+            await attemptSave()
         }
+        if (refreshCounter === 2){
+            setMessage('please login or create account to save it' ); 
+        }
+
     };
     
 
@@ -109,6 +149,12 @@ const CreateNotePage: React.FC = () => {
 
     return (
         <div className="dark:bg-gray-900 min-h-screen w-full flex flex-col items-center pt-10">
+            {message && (
+              <div className="text-green-500" role="alert"> 
+                  {/* Change the class for success messages if desired */}
+                  {message}
+              </div>
+          )}
             <input 
                 type="text" 
                 value={title} 
