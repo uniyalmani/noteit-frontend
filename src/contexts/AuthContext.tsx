@@ -2,6 +2,8 @@
 import React, { createContext, useState, useEffect, FC } from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import fetcher from '../services/api';   
+import { SIGNIN_ENDPOINT, SIGNUP_ENDPOINT  } from '../utils/constants';
 
 interface AuthContextData {
     isLoggedIn: boolean;
@@ -32,13 +34,24 @@ const AuthProvider: FC = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
         console.log("inside the login function");
-        const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+
+        const response: any = await fetcher(`${SIGNIN_ENDPOINT}`, 
+        {
             method: 'POST',
             body: JSON.stringify({ email, password }),
             headers: {
                 'Content-Type': 'application/json',
             },
-        });
+        }
+                );
+        
+        // const response = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+        //     method: 'POST',
+        //     body: JSON.stringify({ email, password }),
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        // });
         console.log(response, "chek")
 
         if (response.ok) {
@@ -85,13 +98,24 @@ const AuthProvider: FC = ({ children }) => {
   const signup = async (name: string, email: string, password: string) => {
     try {
         console.log("inside the login function");
-        const response = await fetch('http://127.0.0.1:8000/api/auth/signup/', {
+        
+        const response: any = await fetcher(`${SIGNUP_ENDPOINT}`, 
+        {
             method: 'POST',
             body: JSON.stringify({name, email, password }),
             headers: {
                 'Content-Type': 'application/json',
             },
-        });
+        }
+                );
+
+        // const response = await fetch('http://127.0.0.1:8000/api/auth/signup/', {
+        //     method: 'POST',
+        //     body: JSON.stringify({name, email, password }),
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        // });
 
         if (response.ok) {
             const data = await response.json();
@@ -112,7 +136,7 @@ const AuthProvider: FC = ({ children }) => {
                 const errorData = await response.json(); 
                 throw new Error(errorData.message); 
             } else {
-                console.log(response.status)
+                
                 throw new Error('Login failed. Please check your credentials.'); 
             }
         }

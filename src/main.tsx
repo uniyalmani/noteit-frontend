@@ -8,7 +8,7 @@ import SignIn from './components/auth/SignIn.tsx'
 import SignUp from './components/auth/SignUp.tsx'
 import About from './components/common/About.tsx'
 import CreateNotePage from './components/notes/CreateNotePage.tsx'
-import { AuthProvider } from './AuthContext';
+import { AuthProvider } from './contexts/AuthContext.tsx';
 
   const router = createBrowserRouter(
     createRoutesFromElements(

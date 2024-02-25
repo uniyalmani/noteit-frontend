@@ -4,8 +4,10 @@ import 'react-quill/dist/quill.snow.css';
 import { useParams, useLocation } from 'react-router-dom'; 
 import Quill, { Delta } from 'quill';
 import { useAuth } from '../../hooks/useAuth';
-import { AuthContext } from '../../AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import fetcher from '../../services/api';   
+import { CREATE_NOTE_ENDPOINT, MAX_SAVE_ATTEMPTS } from '../../utils/constants';
 
 import Cookies from 'js-cookie';
 
@@ -70,7 +72,8 @@ const CreateNotePage: React.FC = () => {
     
             try {
                 const accessToken = Cookies.get('accessToken');
-                const response = await fetch('http://127.0.0.1:8000/api/notes/createnote/', { // Assuming '/api/notes' is your backend route
+                const response: any = await fetcher(`${CREATE_NOTE_ENDPOINT}`, 
+                { // Assuming '/api/notes' is your backend route
                     method: 'POST', // Or 'PUT' for editing
                     headers: { 
                         'Content-Type': 'application/json' ,
@@ -79,6 +82,8 @@ const CreateNotePage: React.FC = () => {
                 },
                     body: JSON.stringify(dataToSend)
                 });
+            
+               
         
                 if (response.ok) {
                     const data = await response.json();
@@ -114,6 +119,8 @@ const CreateNotePage: React.FC = () => {
             }
 
         };
+
+        
 
         await attemptSave()
         if (refreshCounter === 1){

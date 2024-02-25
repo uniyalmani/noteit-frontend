@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../hooks/useAuth';
+import fetcher from '../../services/api';   
+import { NOTES_ENDPOINT , TOGGLE_PIN_ENDPOINT} from '../../utils/constants';
 import Cookies from 'js-cookie';
 
 const NoteList: React.FC = () => {
@@ -17,39 +19,38 @@ const NoteList: React.FC = () => {
 
     useEffect(()  => {
         let refreshCounter = 0;
-        const fetchNotes:any = async () => 
-        {
+        const fetchNotes = async () => {
             try {
                 const accessToken = Cookies.get('accessToken');
-                const response = await fetch('http://127.0.0.1:8000/api/notes/', {
+                const response: any = await fetcher(`${NOTES_ENDPOINT}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 });
-
+        
                 if (!response.ok) {
                     if (response.status === 401 && !refreshingToken) {
                         try {
-                            await refreshAccessToken(); 
-                            refreshCounter += 1
+                            await refreshAccessToken();
+                            refreshCounter += 1;
                         } catch (error) {
                             console.error('Failed to refresh token:', error);
                         }
                     } else {
                         const errorData = await response.json();
-                        throw new Error(errorData.message || `Request failed with status: ${response.status}`);
+                        throw new Error(
+                            errorData.message || `Request failed with status: ${response.status}`
+                        );
                     }
                 }
-
+        
                 const data = await response.json();
                 setNotes(data.results || []);
-                setSuccessMessage(null)
+                setSuccessMessage(null);
                 setNextPageUrl(data.next);
             } catch (error) {
                 console.error('Error fetching notes data:', error);
             }
-
-
         };
 
         
@@ -63,6 +64,7 @@ const NoteList: React.FC = () => {
             }
     
             if (refreshCounter === 2) {
+        
                 console.log("Refresh token expired");
             }
         };
@@ -114,7 +116,7 @@ const handlePinToggle = async (noteId: number) => {
     try {
         console.log("called")
         const accessToken = Cookies.get('accessToken');
-        const response = await fetch(`http://127.0.0.1:8000/api/notes/togglepin/`, {
+        const response: any = await fetcher(`${TOGGLE_PIN_ENDPOINT}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -122,6 +124,7 @@ const handlePinToggle = async (noteId: number) => {
             },
             body: JSON.stringify({ noteId: noteId })
         });
+    
 
         if (response.ok) {
             // Update the pinned status of the corresponding note
