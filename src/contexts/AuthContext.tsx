@@ -1,9 +1,9 @@
 // AuthProvider.tsx
 import  { createContext, useState, useEffect, FC, ReactNode} from 'react';
 import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import navigateToLogin from '../utils/navigation'
 import fetcher from '../services/api';   
-import { SIGNIN_ENDPOINT, SIGNUP_ENDPOINT  } from '../utils/constants';
+import { SIGNIN_ENDPOINT, SIGNUP_ENDPOINT, REFRESH_TOKEN_ENDPOINT  } from '../utils/constants';
 
 interface AuthContextData {
     isLoggedIn: boolean;
@@ -175,14 +175,14 @@ const refreshAccessToken = async () => {
         if (!refreshToken) {
             throw new Error('No refresh token available.');
         }
-
-        const response = await fetch('http://127.0.0.1:8000/api/auth/refresh-token/', {
+        const response: any = await fetcher(`${REFRESH_TOKEN_ENDPOINT}`, {
             method: 'POST',
             body: JSON.stringify({ refresh_token: refreshToken }),
             headers: {
                 'Content-Type': 'application/json',
             },
         });
+
 
         if (response.ok) {
             const data = await response.json(); 
@@ -224,15 +224,7 @@ useEffect(() => {
 
     checkLoggedIn();  
 
-    // Helper function for redirection with a message
-    const navigateToLogin = (message:string) => {
-        // Assuming you have a 'useNavigate' hook from 'react-router-dom'
-        const navigate = useNavigate(); 
-
-        navigate(`/signin?message=${encodeURIComponent(message)}`);
-
-         
-    }
+    
 
 }, []); 
 

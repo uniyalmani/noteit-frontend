@@ -16,38 +16,42 @@ const CreateNotePage: React.FC = () => {
     const Delta = Quill.import('delta')
     const [noteId, setNoteId] = useState("");
     const location = useLocation(); // Import useLocation
-    const [title, setTitle] = useState('');
+    
     const [content, setContent] = useState(new Delta());
-    const [isEditing, setIsEditing] = useState(false);
-    const [loadedNoteContent, setLoadedNoteContent] = useState(''); // Initialize for editing
+    // const [loadedNoteContent, setLoadedNoteContent] = useState(''); // Initialize for editing
     const quillRef = useRef<ReactQuill | null>(null); 
     const navigate = useNavigate(); 
     const { refreshAccessToken } = useAuth();
     const [message, setMessage] = useState(''); // Initially no message
-
-
+    const [title, setTitle] = useState("");
 
     useEffect(() => {
         console.log(location.state)
-        // setMessage('')
+        
         const { noteData } = location.state || {};// Fetch note data from state
-        // if (!isLoggedIn) {
-        //     navigate(`/signin?message=${encodeURIComponent("Your session has expired. Please log in again.")}`);
-        // }
+        
         if (noteData) {
             // Delta = Quill.import('delta')
-            setIsEditing(true);
+
             setNoteId(noteData.id)
             setTitle(noteData.title);
             setContent(new Delta(noteData.content))
-            setIsEditing(true); 
-    //     // console.log(Delta)   
-            
-            // Convert your content (if necessary) before setting loadedNoteContent
-            
-            setLoadedNoteContent(new Delta(noteData.content));  
+    
+            // setLoadedNoteContent(new Delta(noteData.content));  
         }
     }, [location.state]);
+
+    const handleTitleChange = (e:any) => {
+        // console.log('Title changed:', e.target.value, content, loadedNoteContent); 
+        setTitle(e.target.value);
+    };
+
+    const handleContentChange = (content: any) => {
+        console.log('Content changed:', content);
+        
+        setContent(content);
+    };
+    
 
     const handleSave:any = async () => {
         if (!title) {
@@ -57,14 +61,14 @@ const CreateNotePage: React.FC = () => {
         
         
         const delta = quillRef.current?.getEditor().getContents(); 
-        console.log(delta)
+        // console.log(delta)
         
         const dataToSend = {
             noteId,
             title, 
             content: delta, // Send the delta to the backend
         };
-        console.log(JSON.stringify(dataToSend))
+        // console.log(JSON.stringify(dataToSend))
 
         let refreshCounter = 0;
 
@@ -87,7 +91,7 @@ const CreateNotePage: React.FC = () => {
         
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("data is fine ", data);
+                    // console.log("data is fine ", data);
                     navigate('/', { state: { successMessage: 'Note saved successfully!' } });
                     return data;
                     // navigate('/')
@@ -113,7 +117,7 @@ const CreateNotePage: React.FC = () => {
                 }
             } catch (error:any) {
                 // Handle network errors or other unexpected errors
-                console.error('Error saving note:', error); 
+                // console.error('Error saving note:', error); 
                 setMessage('Error saving note:' + error.message); 
                 // Display a generic error message or handle as needed
             }
@@ -165,14 +169,15 @@ const CreateNotePage: React.FC = () => {
             <input 
                 type="text" 
                 value={title} 
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={handleTitleChange}
                 placeholder="Title"
                 className="w-1/2 p-2 mb-4 rounded-md text-black"
             />
             <ReactQuill
                 theme="snow"
-                value={isEditing ? loadedNoteContent : content}
+                value={content}
                  // Load content conditionally
+                 onChange={handleContentChange}
                 // onChange={(value) => { 
                 //     // Note: onChange might not be needed if you only save on button click 
                 // }}

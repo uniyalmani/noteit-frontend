@@ -1,8 +1,10 @@
 import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faThumbtack } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faThumbtack, faShare } from '@fortawesome/free-solid-svg-icons';
+import { NOTES_ENDPOINT , GENERATE_AND_ACCESS_SHARED_NOTE_ENDPOINT } from '../../utils/constants';
 import Cookies from 'js-cookie';
+import fetcher from '../../services/api'; 
 
 interface NoteCardProps {
     note: Note;
@@ -13,6 +15,7 @@ interface NoteCardProps {
 const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinToggle }) => {
     const navigate = useNavigate();
     const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+    const [shareLink, setShareLink] = useState('');
 
     const handleCardClick = () => {
         navigate(`/createnote`, { state: { noteData: note } });
@@ -32,7 +35,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
     const handleConfirmDelete = async () => {
         try {
             const accessToken = Cookies.get('accessToken');
-            const response = await fetch(`http://127.0.0.1:8000/api/notes/`, {
+            const response: any = await fetcher(`${NOTES_ENDPOINT}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,6 +43,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
                 },
                 body: JSON.stringify({ noteId: note.id })
             });
+
 
             if (!response.ok) {
                 console.error('Failed to delete note:', response.statusText);
@@ -51,6 +55,53 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
             
         } catch (error) {
             console.error('Error deleting note:', error);
+        }
+    };
+
+
+
+    const handleShareClick = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
+        try {
+            console.log(note)
+            const accessToken = Cookies.get('accessToken');
+            const response: any = await fetcher(`${GENERATE_AND_ACCESS_SHARED_NOTE_ENDPOINT}${note.id}/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+    
+            if (!response.ok) {
+                console.error('Failed to generate share link:', response.statusText);
+                return;
+            }
+            
+            const data = await response.json();
+            console.log(data)
+            const shareableLink = `${window.location.origin}/public/${data.data.public_link}`;
+            setShareLink(shareableLink);
+        } catch (error) {
+            console.error('Error generating share link:', error);
+        }
+    };
+
+    const handleCopyClick = (e: any) => {
+        e.stopPropagation();
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(shareLink)
+                .then(() => alert('Link copied to clipboard'))
+                .catch((error) => console.error('Failed to copy link: ', error));
+        } else {
+            // Fallback for browsers that do not support navigator.clipboard
+            const textArea = document.createElement('textarea');
+            textArea.value = shareLink;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            alert('Link copied to clipboard');
         }
     };
 
@@ -66,11 +117,14 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
             <p className="font-normal text-gray-700 dark:text-gray-400 mb-3">
             {note.content ? extractDescription(note.content) : "No content available"}  
             </p>
-            <div className="absolute bottom-0 right-0 mb-2 mr-2">
-                <div className="mr-4 m-4" onClick={handlePinClick}>
+            <div className="absolute bottom-0 right-0 mb-4 mr-4 p-3 flex items-center justify-center bg-white rounded-lg shadow">
+                <div className="mr-4" onClick={handleShareClick}>
+                    <FontAwesomeIcon icon={faShare} className="cursor-pointer text-xl text-blue-500" />
+                </div>
+                <div className="mr-4" onClick={handlePinClick}>
                     <FontAwesomeIcon icon={faThumbtack} className={`cursor-pointer text-xl ${note.is_pinned ? 'text-blue-500' : 'text-gray-500'}`} />
                 </div>
-                <div className="mr-4 m-4" onClick={handleDeleteClick}>
+                <div className="mr-4" onClick={handleDeleteClick}>
                     <FontAwesomeIcon icon={faTrash} className="cursor-pointer text-xl text-red-500" />
                 </div>
             </div>
@@ -85,6 +139,22 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
                     </div>
                 </div>
             )}
+             {shareLink && (
+            <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" onClick={() => setShareLink('')}>
+                <div className="bg-white p-4 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex justify-between items-center mb-2">
+                        <p className="text-lg text-gray-900">Share Link:</p>
+                        <button onClick={() => setShareLink('')} className="text-gray-500 hover:text-gray-700 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <input type="text" value={shareLink} className="w-full mb-2" readOnly />
+                    <button onClick={handleCopyClick} className="bg-blue-500 text-white px-4 py-2 rounded">Copy</button>
+                </div>
+            </div>
+)}
         </div>
     );
 };
@@ -97,7 +167,7 @@ function extractDescription(content: ContentItem[] | undefined) {
               return text;
           }
       }, '');
-      return text.slice(0, 200) + '...';
+      return text.slice(0, 500) + '...';
 }
 
 export default NoteCard;
