@@ -1,30 +1,42 @@
-# React + TypeScript + Vite
+# Note It
+Note It is a web application designed to help users manage their notes effectively. Whether you need to jot down quick thoughts, organize your ideas, or store important information, Note It provides a user-friendly platform for all your note-taking needs.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Features
+User Authentication: Securely sign up and log in to your account to access your notes from anywhere.
+Note Management: Create, edit, delete, and organize your notes effortlessly.
+Rich Text Editing: Enjoy a seamless note-taking experience with rich text editing capabilities.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Getting Started
+To get started with Note It:
 
-## Expanding the ESLint configuration
+Sign up for an account using your email and password.
+Log in to your account to start taking notes.
+Create new notes, edit existing ones, or delete notes as needed.
+Enjoy a seamless note-taking experience with Note It!
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+## Test Account
+```
+Email: test@gmail.com
+Password: 123456
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Overview
+
+This project is a web application built using React for the frontend and Django for the backend. It includes user authentication and authorization features and is hosted on AWS infrastructure.
+
+- **Frontend**: React
+- **Backend**: Django
+- **Database**: MySql AWS RDS (Relational Database Service)
+- **Containerization**: Docker
+- **CI/CD**: GitHub Actions
+- **Deployment**: Frontend and Backend hosted on separate EC2 instances
+
+## Docker Hub
+docker image -  
+https://hub.docker.com/u/ashutosh211
+
+
+
+
