@@ -9,7 +9,7 @@ Rich Text Editing: Enjoy a seamless note-taking experience with rich text editin
 
 # Getting Started
 To get started with Note It:
-
+Link - http://ec2-54-224-57-39.compute-1.amazonaws.com/
 Sign up for an account using your email and password.
 Log in to your account to start taking notes.
 Create new notes, edit existing ones, or delete notes as needed.
@@ -37,6 +37,12 @@ This project is a web application built using React for the frontend and Django 
 docker image -  
 https://hub.docker.com/u/ashutosh211
 
+
+
+## local set 
+
+clone the repo
+docker-compose up
 
 
 
