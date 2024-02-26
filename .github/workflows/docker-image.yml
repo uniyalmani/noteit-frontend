@@ -1,0 +1,24 @@
+name: push to docker hub
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login Dockerhub
+      env:
+        DOCKER_HUB_USER: ${{secrets.DOCKER_HUB_USER}}
+        DOCKER_HUB_PASSWORD: ${{secrets.DOCKER_HUB_PASSWORD}}
+      run: docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+      
+    - name: Build the Docker image
+      run: docker build -t ashutosh211/noteitfrontend .
+    - name: Push to Dockerhub
+      run: docker push ashutosh211/noteitfrontend:latest
