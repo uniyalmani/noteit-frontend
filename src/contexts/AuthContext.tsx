@@ -1,5 +1,5 @@
 // AuthProvider.tsx
-import React, { createContext, useState, useEffect, FC } from 'react';
+import  { createContext, useState, useEffect, FC, ReactNode} from 'react';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import fetcher from '../services/api';   
@@ -17,16 +17,20 @@ interface AuthContextData {
   }
   
 
+  interface AuthProviderProps {
+    children: ReactNode; // Specify that children prop can be any ReactNode
+}
+
   const AuthContext = createContext<AuthContextData>({
     isLoggedIn: false,
     login: async () => {},
-    signup: async () => {},
+    signup: async () => {}, 
     logout: () => {},
     refreshAccessToken: async () => {} // Placeholder 
 });
 
 
-const AuthProvider: FC = ({ children }) => {
+const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
   const [refreshToken, setRefreshToken] = useState<string | undefined>(undefined);
@@ -225,12 +229,9 @@ useEffect(() => {
         // Assuming you have a 'useNavigate' hook from 'react-router-dom'
         const navigate = useNavigate(); 
 
-        // Implementation for passing the message and redirecting:
-        // Option 1: Using query parameters 
         navigate(`/signin?message=${encodeURIComponent(message)}`);
 
-        // Option 2: Using state (might depend on your router setup)
-        // navigate('/login', { state: { message: message } }); 
+         
     }
 
 }, []); 

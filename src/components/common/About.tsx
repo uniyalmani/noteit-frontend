@@ -10,8 +10,10 @@ function About(){
             <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Remember It All</h1>
             <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">Unleash Your Limitless Future with Note It
                 No more fleeting whispers, no more lost masterpieces. Note It isn't just a place to capture scattered thoughts and fleeting inspirations; it's a portal to unlock your full creative potential. Imagine a vibrant playground where ideas dance freely, 
-                where every spark of brilliance has a safe haven to ignite. That's what Note It offers.</p>
-            
+                where every spark of brilliance has a safe haven to ignite. That's what Note It offers.
+                </p>
+                <div className="text-green-500">Developed by - Ashutosh Uniyal (ashutoshuniyal21@gmail.com)</div>
+
         </div>
     </div>
 </section>

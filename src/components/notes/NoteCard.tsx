@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faThumbtack } from '@fortawesome/free-solid-svg-icons';
@@ -21,7 +21,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
     const handlePinClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
         console.log("hello")
-        handlePinToggle(note.id); // Call handlePinToggle function with note id
+        note.id && handlePinToggle(note.id); // Call handlePinToggle function with note id
     };
 
     const handleDeleteClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -47,7 +47,8 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
             }
 
             setConfirmDelete(false);
-            updateNoteList(note.id); // Update note list after successful deletion
+            note.id && updateNoteList(note.id);
+            
         } catch (error) {
             console.error('Error deleting note:', error);
         }
@@ -63,7 +64,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
                 {note.title}
             </h5>
             <p className="font-normal text-gray-700 dark:text-gray-400 mb-3">
-                {extractDescription(note.content)} 
+            {note.content ? extractDescription(note.content) : "No content available"}  
             </p>
             <div className="absolute bottom-0 right-0 mb-2 mr-2">
                 <div className="mr-4 m-4" onClick={handlePinClick}>
@@ -88,15 +89,15 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
     );
 };
 
-function extractDescription(content: ContentItem[]) { 
-    const text = content.reduce((text, item) => {
-        if (typeof item.insert === 'string') {
-            return text + item.insert;
-        } else {
-            return text;
-        }
-    }, '');
-    return text.slice(0, 200) + '...';
+function extractDescription(content: ContentItem[] | undefined) { 
+    const text = (content ?? []).reduce((text, item) => { // Handle potential undefined
+          if (typeof item.insert === 'string') {
+              return text + item.insert;
+          } else {
+              return text;
+          }
+      }, '');
+      return text.slice(0, 200) + '...';
 }
 
 export default NoteCard;

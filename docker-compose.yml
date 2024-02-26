@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+
+
+  noteitfrontend:
+    container_name: noteitfrontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+ 
+
+    volumes:
+      - .:/usr/src/app
+
+    ports:  
+      - "80:80"

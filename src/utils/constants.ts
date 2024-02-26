@@ -1,5 +1,5 @@
 // src/utils/constants.ts
-export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8000/api/'; 
+export const API_BASE_URL =  'http://54.162.94.234/api/'; 
 export const SIGNIN_ENDPOINT = 'auth/login/';
 export const SIGNUP_ENDPOINT = 'auth/signup/';
 export const NOTES_ENDPOINT = 'notes/';

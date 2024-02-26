@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef, useContext} from 'react';
+import  { useState, useEffect, useRef} from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useParams, useLocation } from 'react-router-dom'; 
-import Quill, { Delta } from 'quill';
+import {  useLocation } from 'react-router-dom'; 
+import Quill from 'quill';
 import { useAuth } from '../../hooks/useAuth';
-import { AuthContext } from '../../contexts/AuthContext';
+
 import { useNavigate } from 'react-router-dom';
 import fetcher from '../../services/api';   
-import { CREATE_NOTE_ENDPOINT, MAX_SAVE_ATTEMPTS } from '../../utils/constants';
+import { CREATE_NOTE_ENDPOINT } from '../../utils/constants';
 
 import Cookies from 'js-cookie';
 

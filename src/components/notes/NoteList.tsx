@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import NoteCard from "./NoteCard";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,9 +12,9 @@ const NoteList: React.FC = () => {
     const [notes, setNotes] = useState<Note[]>([]);
     const [nextPageUrl, setNextPageUrl] = useState<string | null>(null);
     const navigate = useNavigate();
-    const { refreshAccessToken } = useAuth();
+    const { refreshAccessToken, logout } = useAuth();
     const location = useLocation();
-    const [refreshingToken, setRefreshingToken] = useState(false); 
+    // const [refreshingToken] = useState(false); 
     const [successMessage, setSuccessMessage] = useState(location.state && location.state.successMessage)
 
     useEffect(()  => {
@@ -22,6 +22,7 @@ const NoteList: React.FC = () => {
         const fetchNotes = async () => {
             try {
                 const accessToken = Cookies.get('accessToken');
+                console.log(accessToken)
                 const response: any = await fetcher(`${NOTES_ENDPOINT}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -29,7 +30,7 @@ const NoteList: React.FC = () => {
                 });
         
                 if (!response.ok) {
-                    if (response.status === 401 && !refreshingToken) {
+                    if (response.status === 401 ) {
                         try {
                             await refreshAccessToken();
                             refreshCounter += 1;
@@ -45,7 +46,8 @@ const NoteList: React.FC = () => {
                 }
         
                 const data = await response.json();
-                setNotes(data.results || []);
+                console.log(data)
+                setNotes(data.data.results || []);
                 setSuccessMessage(null);
                 setNextPageUrl(data.next);
             } catch (error) {
@@ -64,7 +66,7 @@ const NoteList: React.FC = () => {
             }
     
             if (refreshCounter === 2) {
-        
+                logout()
                 console.log("Refresh token expired");
             }
         };
@@ -159,7 +161,7 @@ const handlePinToggle = async (noteId: number) => {
                 <p className="text-gray-900 dark:text-white text-lg">Create New Note</p>
             </div>
             {/* Display pinned notes first */}
-            {notes.filter(note => note.is_pinned).map(note => (
+            {notes.filter(note => note.is_pinned ).map(note => (
                 <NoteCard key={note.id} note={note} updateNoteList={updateNoteList} handlePinToggle={handlePinToggle} />
             ))}
             {/* Display other notes */}
