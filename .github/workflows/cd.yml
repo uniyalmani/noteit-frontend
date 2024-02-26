@@ -1,0 +1,23 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["push to docker hub"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps: 
+      - name: Pull Docker image
+        run: sudo docker pull ashutosh211/noteitfrontend:latest
+
+      - name: Delete Old docker container
+        run: sudo docker rm -f noteitfrontend || true
+
+      - name: Run Docker Container
+        run: |
+  
+          sudo docker run -d -p 80:80 --name noteitfrontend  ashutosh211/noteitfrontend:latest
