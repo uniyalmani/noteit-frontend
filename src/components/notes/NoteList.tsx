@@ -163,7 +163,7 @@ const handlePinToggle = async (noteId: number) => {
                 onClick={handleCreateNewNote}
                 style={{ maxHeight: '50vh', maxWidth: '50vh' }}
             >
-                <FontAwesomeIcon icon={faPlus} size="4x" color='white' className="mb-2" /> 
+                <FontAwesomeIcon icon={faPlus} size="4x" color='gray' className="mb-2" /> 
                 <p className="text-gray-900 dark:text-white text-lg">Create New Note</p>
             </div>
             {/* Display pinned notes first */}
