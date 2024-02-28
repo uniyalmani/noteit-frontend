@@ -63,7 +63,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
     const handleShareClick = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
         try {
-            console.log(note)
+            // console.log(note)
             const accessToken = Cookies.get('accessToken');
             const response: any = await fetcher(`${GENERATE_AND_ACCESS_SHARED_NOTE_ENDPOINT}${note.id}/`, {
                 method: 'GET',

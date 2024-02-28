@@ -109,7 +109,7 @@ const CreateNotePage: React.FC = () => {
                         }
                     } else {   
                         // Handle other non-successful status codes
-                        const errorData = await response.json(); 
+                        await response.json(); 
                         setMessage('Error saving note:'); 
                         // console.error('Error saving note:', errorData);
                         // Display an error message or handle it according to your UI

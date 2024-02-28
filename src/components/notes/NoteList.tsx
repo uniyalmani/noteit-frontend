@@ -53,7 +53,8 @@ const NoteList: React.FC = () => {
                 setNextPageUrl(data.next);
             } catch (error:any) {
                 setErrorMessage(error)
-                console.error('Error fetching notes data:', error);
+                console.error('Error fetching notes data:');
+                console.log(errorMessage)
             }
         };
 
