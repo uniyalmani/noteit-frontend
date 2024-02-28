@@ -37,7 +37,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-        console.log("inside the login function");
+        // console.log("inside the login function");
 
         const response: any = await fetcher(`${SIGNIN_ENDPOINT}`, 
         {
@@ -101,7 +101,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   const signup = async (name: string, email: string, password: string) => {
     try {
-        console.log("inside the login function");
+        // console.log("inside the login function");
         
         const response: any = await fetcher(`${SIGNUP_ENDPOINT}`, 
         {
@@ -197,7 +197,7 @@ const refreshAccessToken = async () => {
             throw new Error('Network error while refreshing token.');
         }
     } catch (error) {
-        console.error('Error refreshing access token:', error); 
+        console.error('Error refreshing access token:'); 
         // Consider forcing logout or other actions if token refresh fails
     }
 };
@@ -213,7 +213,7 @@ useEffect(() => {
             try {
                 await refreshAccessToken(); 
             } catch (error) {
-                console.error('Error refreshing token:', error);
+                // console.error('Error refreshing token:', error);
                 logout(); // Force logout if refresh fails
                 navigateToLogin('Your session has expired. Please log in again.'); // Redirect 
             }

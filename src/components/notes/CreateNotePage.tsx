@@ -47,7 +47,7 @@ const CreateNotePage: React.FC = () => {
     };
 
     const handleContentChange = (content: any) => {
-        console.log('Content changed:', content);
+        // console.log('Content changed:', content);
         
         setContent(content);
     };
@@ -104,14 +104,14 @@ const CreateNotePage: React.FC = () => {
                              
                         } catch (error:any) {
                             setMessage('Failed to refresh token:'+ error.message); 
-                            console.error('Failed to refresh token:', error);
+                            // console.error('Failed to refresh token:', error);
                             // Handle refresh failure (e.g., redirect to login)
                         }
                     } else {   
                         // Handle other non-successful status codes
                         const errorData = await response.json(); 
                         setMessage('Error saving note:'); 
-                        console.error('Error saving note:', errorData);
+                        // console.error('Error saving note:', errorData);
                         // Display an error message or handle it according to your UI
                     }
                 }

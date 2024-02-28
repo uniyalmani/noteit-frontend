@@ -16,13 +16,14 @@ const NoteList: React.FC = () => {
     const location = useLocation();
     // const [refreshingToken] = useState(false); 
     const [successMessage, setSuccessMessage] = useState(location.state && location.state.successMessage)
+    const [errorMessage, setErrorMessage] = useState('')
 
     useEffect(()  => {
         let refreshCounter = 0;
         const fetchNotes = async () => {
             try {
                 const accessToken = Cookies.get('accessToken');
-                console.log(accessToken)
+                // console.log(accessToken)
                 const response: any = await fetcher(`${NOTES_ENDPOINT}`, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
@@ -46,11 +47,12 @@ const NoteList: React.FC = () => {
                 }
         
                 const data = await response.json();
-                console.log(data)
+                // console.log(data)
                 setNotes(data.data.results || []);
                 setSuccessMessage(null);
                 setNextPageUrl(data.next);
-            } catch (error) {
+            } catch (error:any) {
+                setErrorMessage(error)
                 console.error('Error fetching notes data:', error);
             }
         };
@@ -107,8 +109,9 @@ const NoteList: React.FC = () => {
                 setNotes(prevNotes => [...prevNotes, ...data.results]);
                 setNextPageUrl(data.next);
             }
-        } catch (error) {
-            console.error('Error fetching next page of notes:', error);
+        } catch (error:any) {
+            // console.error('Error fetching next page of notes:', error);
+            setErrorMessage(error)
         }
     };
 
@@ -136,10 +139,12 @@ const handlePinToggle = async (noteId: number) => {
                 )
             );
         } else {
-            console.error('Failed to toggle pin:', response.statusText);
+            // console.error('Failed to toggle pin:', response.statusText);
+            setErrorMessage('Failed to toggle pin:')
         }
     } catch (error) {
-        console.error('Error toggling pin:', error);
+        // console.error('Error toggling pin:', error);
+        setErrorMessage('Error toggling pin:')
     }
 };
 

@@ -15,9 +15,9 @@ function SignUp(){
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            console.log("inside the submit ")
-            console.log(email, password)
-            console.log()
+            // console.log("inside the submit ")
+            // console.log(email, password)
+            // console.log()
           await signup(username, email, password);
           setSuccessMessage('Login successful! Redirecting to home page...');
           navigate('/', { state: { successMessage: 'account creation completed' }})

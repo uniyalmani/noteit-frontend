@@ -18,15 +18,15 @@ function SignIn(){
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-        console.log("inside the submit ")
+        // console.log("inside the submit ")
         console.log(email, password)
-        console.log(login)
+        // console.log(login)
       await login(email, password);
       setSuccessMessage('Login successful! Redirecting to home page...');
       navigate('/'); 
     //   history.push('/'); // Redirect to home page after successful login
     } catch (error: any) {
-        console.log(error)
+        // console.log(error)
       setError(error.message);
     }
   };
