@@ -1,4 +1,4 @@
-# Note It
+# Note It 
 Note It is a web application designed to help users manage their notes effectively. Whether you need to jot down quick thoughts, organize your ideas, or store important information, Note It provides a user-friendly platform for all your note-taking needs.
 
 Features
@@ -10,6 +10,7 @@ Rich Text Editing: Enjoy a seamless note-taking experience with rich text editin
 # Getting Started
 To get started with Note It:
 Link - http://ec2-54-224-57-39.compute-1.amazonaws.com/
+web link with domain - *** http://www.noteit.co.in/ ***
 Sign up for an account using your email and password.
 Log in to your account to start taking notes.
 Create new notes, edit existing ones, or delete notes as needed.
@@ -34,15 +35,19 @@ This project is a web application built using React for the frontend and Django 
 - **Deployment**: Frontend and Backend hosted on separate EC2 instances
 
 ## Docker Hub
-docker image -  
-https://hub.docker.com/u/ashutosh211
+  docker image -  
+  https://hub.docker.com/u/ashutosh211
 
+## Compatibility
+Browsers: The website is compatible with all modern web browsers including Google Chrome, Mozilla Firefox etc.
+Devices: The website is designed to be responsive and works seamlessly on laptops, desktops.
 
 
 ## local set 
-
-clone the repo
-docker-compose up
+```
+  clone the repo
+  docker-compose up
+```
 
 
 

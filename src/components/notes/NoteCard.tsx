@@ -23,7 +23,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
 
     const handlePinClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
-        console.log("hello")
+        // console.log("hello")
         note.id && handlePinToggle(note.id); // Call handlePinToggle function with note id
     };
 
@@ -54,7 +54,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
             note.id && updateNoteList(note.id);
             
         } catch (error) {
-            console.error('Error deleting note:', error);
+            console.error('Error deleting note:');
         }
     };
 
@@ -63,7 +63,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
     const handleShareClick = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         e.stopPropagation();
         try {
-            console.log(note)
+            // console.log(note)
             const accessToken = Cookies.get('accessToken');
             const response: any = await fetcher(`${GENERATE_AND_ACCESS_SHARED_NOTE_ENDPOINT}${note.id}/`, {
                 method: 'GET',
@@ -79,7 +79,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
             }
             
             const data = await response.json();
-            console.log(data)
+            // console.log(data)
             const shareableLink = `${window.location.origin}/public/${data.data.public_link}`;
             setShareLink(shareableLink);
         } catch (error) {

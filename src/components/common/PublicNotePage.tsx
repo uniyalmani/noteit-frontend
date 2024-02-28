@@ -16,11 +16,11 @@ const PublicNotePage:React.FC = () => {
 
     
     useEffect(() => {
-        console.log(publicId)
+        // console.log(publicId)
         
         const fetchNote = async () => {
             try {
-                console.log(`${GET_NOTE_BY_PUBLIC_ID_ENDPOINT}${publicId}`)
+                // console.log(`${GET_NOTE_BY_PUBLIC_ID_ENDPOINT}${publicId}`)
                 const response:any = await fetcher(`${GET_NOTE_BY_PUBLIC_ID_ENDPOINT}${publicId}/`,
                 {
                     method: 'GET',
@@ -31,18 +31,18 @@ const PublicNotePage:React.FC = () => {
 
                 }
                 );
-                console.log(response)
+                // console.log(response)
                 if (!response.ok) {
                     throw new Error('Failed to fetch note');
                 }
                 const noteData = await response.json();
-                console.log(noteData.data.content)
+                // console.log(noteData.data.content)
                 setTitle(noteData.data.title);
                 setContent(new Delta(noteData.data.content))
             } catch (error) {
-                console.log(error)
+                // console.log(error)
                 setMessage('Error fetching note');
-                console.error('Error fetching note:', error);
+                // console.error('Error fetching note:', error);
             }
         };
 
