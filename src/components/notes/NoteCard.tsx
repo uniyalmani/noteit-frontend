@@ -111,13 +111,15 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
             onClick={handleCardClick}
             style={{ maxHeight: '50vh', maxWidth: '50vh' }}
         >
+            <div className="overflow-y-hidden" style={{ maxHeight: 'calc(50vh - 100px)' }}>
             <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
                 {note.title}
             </h5>
             <p className="font-normal text-gray-700 dark:text-gray-400 mb-3">
             {note.content ? extractDescription(note.content) : "No content available"}  
             </p>
-            <div className="absolute bottom-0 right-0 mb-4 mr-4 p-3 flex items-center justify-center bg-white rounded-lg shadow">
+           </div>
+            <div className=" absolute bottom-0 right-0 mb-4 mr-4 p-3 flex items-center justify-center bg-white rounded-lg shadow" style={{ maxWidth: 'calc(100% - 24px)' }}>
                 <div className="mr-4" onClick={handleShareClick}>
                     <FontAwesomeIcon icon={faShare} className="cursor-pointer text-xl text-blue-500" />
                 </div>
@@ -128,6 +130,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, updateNoteList, handlePinTogg
                     <FontAwesomeIcon icon={faTrash} className="cursor-pointer text-xl text-red-500" />
                 </div>
             </div>
+            
             {confirmDelete && (
                 <div className="absolute inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" onClick={() => setConfirmDelete(false)}>
                     <div className="bg-white p-4 rounded-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
